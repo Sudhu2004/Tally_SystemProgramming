@@ -1,7 +1,7 @@
 import socket
 
 def receive_file(output_filename, group, port):
-    # Define the chunk size
+    # Define the chunk sizes
     CHUNK_SIZE = 1024
 
     # Create a UDP socket
