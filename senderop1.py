@@ -183,19 +183,17 @@ def send_group_list(sock, client_address, manager):
 
 
 # Function to handle client authentication
-def handle_authentication(sock, manager):
+def handle_authentication(sock, manager, login_id, password, client_address):
     while True:
         try:
-            data, client_address = sock.recvfrom(1024)
-            login_info = data.decode().split(',')
-            if len(login_info) == 2:
-                login_id, password = login_info
+           
+            if login_id and password:
                 if manager.authenticate(login_id, password):
                     sock.sendto(b"AUTH_SUCCESS", client_address)
                     print(f"Client {client_address} authenticated successfully.")
                     break  # Stop the thread after successful authentication
                 else:
-                    sock.sendto(b"AUTH_FAIL", client_address)
+                    sock.sendto(b"WRONG_CRED", client_address)
                     print(f"Client {client_address} authentication failed.")
             else:
                 sock.sendto(b"AUTH_FAIL", client_address)
@@ -203,28 +201,37 @@ def handle_authentication(sock, manager):
             print(f"Error during authentication: {e}")
 
 
-# Function to handle incoming join requests in the background
-def handle_join_requests(sock, manager):
+# Function to handle client requests including authentication and group operations
+def handle_client_requests(sock, manager):
     while True:
-        data, client_address = sock.recvfrom(1024)
-        if data.decode().startswith("MY_GROUPS"):
-            _, client_login_id = data.decode().split(",")
-            # Retrieve the list of groups for the client
-            group_list = manager.client_groups.get(client_login_id, [])
-            # Join the list into a comma-separated string
-            group_list_str = ','.join(group_list)
-            # Send the list of groups back to the client
-            sock.sendto(group_list_str.encode(), client_address)
-        elif data.decode().startswith("REQUEST_GROUPS"):
-            send_group_list(sock, client_address, manager)
-        elif data.decode().startswith("JOIN_GROUP"):
-            group_ip, client_ip = data.decode().split(",")[1:]
-            manager.add_join_request(group_ip, client_ip)
-        elif data.decode().startswith("REQUEST_MEMBERS"):
-            group_ip = data.decode().split(",")[1]
-            members = manager.get_group_members(group_ip)
-            members_list = ",".join(members).encode()
-            sock.sendto(members_list, client_address)
+        try:
+            data, client_address = sock.recvfrom(1024)
+            # Handle different types of requests
+            if data.decode().startswith("AUTH"):
+                parts = data.decode().split(',')
+                _, loginId, passWD = parts
+                threading.Thread(target=handle_authentication, args=(sock, manager, loginId, passWD, client_address), daemon=True).start()
+            elif data.decode().startswith("MY_GROUPS"):
+                _, client_login_id = data.decode().split(",")
+                # Retrieve the list of groups for the client
+                group_list = manager.client_groups.get(client_login_id, [])
+                # Join the list into a comma-separated string
+                group_list_str = ','.join(group_list)
+                # Send the list of groups back to the client
+                sock.sendto(group_list_str.encode(), client_address)
+            elif data.decode().startswith("REQUEST_GROUPS"):
+                send_group_list(sock, client_address, manager)
+            elif data.decode().startswith("JOIN_GROUP"):
+                group_ip, client_ip = data.decode().split(",")[1:]
+                manager.add_join_request(group_ip, client_ip)
+            elif data.decode().startswith("REQUEST_MEMBERS"):
+                group_ip = data.decode().split(",")[1]
+                members = manager.get_group_members(group_ip)
+                members_list = ",".join(members).encode()
+                sock.sendto(members_list, client_address)
+        except Exception as e:
+            print(f"Error handling client requests: {e}")
+
 
 
 # Main function for sender
@@ -235,9 +242,8 @@ def main():
         sock.bind(('127.0.0.1', 5005))  # Server address and port
 
         # Start threads to handle authentication and join requests
-        threading.Thread(target=handle_authentication, args=(sock, manager), daemon=True).start()
-        threading.Thread(target=handle_join_requests, args=(sock, manager), daemon=True).start()
-
+        threading.Thread(target=handle_client_requests, args=(sock, manager), daemon=True).start()
+        
         while True:
             print("\nSender Menu:")
             print("1. Create Group")

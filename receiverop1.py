@@ -4,7 +4,7 @@ import threading
 # Function to send authentication request
 def send_auth_request(sock, server_address, login_id, password):
     while True:
-        credentials = f"{login_id},{password}".encode()
+        credentials = f"AUTH,{login_id},{password}".encode()
         sock.sendto(credentials, server_address)
         sock.settimeout(5)  # Set a timeout for the authentication response
         try:
@@ -92,12 +92,9 @@ def main():
         if not send_auth_request(sock, server_address, login_id, password):
             return
 
-        # Bind to a port for receiving files
-        file_receive_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        file_receive_sock.bind(('', 5006))  # Port for file reception
-
+       
         # Start a thread to handle file reception requests
-        threading.Thread(target=handle_file_requests, args=(file_receive_sock,), daemon=True).start()
+        # threading.Thread(target=handle_file_requests, args=(file_receive_sock,), daemon=True).start()
 
         while True:
             print("\nReceiver Menu:")
