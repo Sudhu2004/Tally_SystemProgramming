@@ -23,11 +23,11 @@ The File Distribution Tool is a client-server application that allows for secure
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/group-management-system.git
+   git clone https://github.com/Sudhu2004/Tally_SystemProgramming.git
    ```
 2. **Navigate to the project directory**:
    ```bash
-   cd group-management-system
+   cd Tally_SystemProgramming
    ```
 3. **Install required Python packages** (if any):
    ```bash
