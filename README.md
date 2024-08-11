@@ -1,4 +1,4 @@
-# Group Management System with Authentication - README
+# Group Management System with Authentication 
 
 ## Overview
 
