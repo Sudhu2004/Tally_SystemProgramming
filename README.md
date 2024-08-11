@@ -41,7 +41,7 @@ The sender is responsible for managing groups, handling client authentication, a
 
 - Run the `main()` function in the sender script:
   ```bash
-  python sender.py
+  python admin.py
   ```
 
 #### Sender Menu Options:
@@ -65,7 +65,7 @@ The receiver interacts with the sender, allowing the user to authenticate, join 
 
 - Run the `main()` function in the receiver script:
   ```bash
-  python receiver.py
+  python Client\newClient.py
   ```
 
 #### Receiver Menu Options:
