@@ -107,10 +107,6 @@ Files are sent over the network using UDP multicast. The server sends files to a
 - Verify network connectivity between the sender and receivers.
 - Check for any firewall or network restrictions that may block UDP traffic.
 
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
 ## Contact
 
-For any issues or contributions, please contact [your-email@example.com].
+For any issues or contributions, please contact.
