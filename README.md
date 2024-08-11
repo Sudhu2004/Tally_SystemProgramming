@@ -1,8 +1,8 @@
-# Group Management System with Authentication 
+# File Distribution Tool
 
 ## Overview
 
-The Group Management System with Authentication is a client-server application that allows for secure group-based file sharing over a network. The system is designed with a server (Sender) that manages groups, handles authentication, and sends files, and clients (Receivers) that can join groups, receive files, and interact with the server to manage their memberships.
+The File Distribution Tool is a client-server application that allows for secure group-based file sharing over a network. The system is designed with a server (Sender) that manages groups, handles authentication, and sends files, and clients (Receivers) that can join groups, receive files, and interact with the server to manage their memberships.
 
 ## Features
 
